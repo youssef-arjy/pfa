@@ -378,7 +378,7 @@ if (loginBtn) {
             const res = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: 'admin@amazigh.com', password: adminPassword.value })
+                body: JSON.stringify({ email: document.getElementById('adminEmail').value, password: adminPassword.value })
             });
             const data = await res.json();
             if (data.success) {
