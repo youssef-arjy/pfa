@@ -1,3 +1,6 @@
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+
 const express = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
@@ -31,7 +34,7 @@ app.use(helmet());
 
 // Enable CORS
 app.use(cors({
-    origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'http://localhost:3000', 'http://127.0.0.1:3000', process.env.CLIENT_URL]
+    origin: [ process.env.CLIENT_URL]
 }));
 
 // Rate limiting
