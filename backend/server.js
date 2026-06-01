@@ -32,10 +32,15 @@ app.use(express.json());
 // Set security headers
 app.use(helmet());
 
-// Enable CORS
+// Enable CORS (with Private Network Access support for Chrome)
 app.use(cors({
-    origin: [ process.env.CLIENT_URL]
+    origin: [ process.env.CLIENT_URL, 'http://localhost:5000', 'http://127.0.0.1:5500', 'http://localhost:5500' ],
+    credentials: true
 }));
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Private-Network', 'true');
+    next();
+});
 
 // Rate limiting
 const limiter = rateLimit({

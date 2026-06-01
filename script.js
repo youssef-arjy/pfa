@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://pfa-amazigh-backend.vercel.app/api';
 
 function getAuthHeader() {
     const token = localStorage.getItem('amazigh_admin_token');
