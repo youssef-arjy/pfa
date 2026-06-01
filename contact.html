@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | Amazigh Store</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tifinagh&family=Outfit:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="top-strip"></div>
+        <nav>
+            <a href="index.html" class="logo">
+                ⴰⵎⴰⵣⵉⵖ <span>STORE</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="boutique.html">Boutique</a></li>
+                <li><a href="histoire.html">Histoire</a></li>
+                <li><a href="contact.html" class="active">Contact</a></li>
+
+            </ul>
+            <div class="header-actions">
+                <button class="currency-switch" id="currencyToggle">🇲🇦 DH</button>
+                <div class="cart-icon" id="cartIcon">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header"
+            style="background: var(--primary-green); color: white; padding: 4rem 2rem; text-align: center;">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem;">Contactez-nous</h1>
+            <p style="font-size: 1.2rem; opacity: 0.9;">Nous sommes à votre écoute</p>
+        </section>
+
+        <section class="container" style="padding: 5rem 2rem;">
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; max-width: 1000px; margin: 0 auto;">
+
+                <!-- Contact Info -->
+                <div class="contact-info-card" style="margin: 0;">
+                    <h3>Informations Directes</h3>
+
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon red">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="contact-info-text">
+                            <p>Téléphone</p>
+                            <a href="tel:0606912553">0606912553</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon green">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-info-text">
+                            <p>Email</p>
+                            <a href="mailto:youssefarjy2@gmail.com">youssefarjy2@gmail.com</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon gold">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-info-text">
+                            <p>Localisation</p>
+                            <p>Partout au Maroc - Livraison à domicile</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WhatsApp CTA -->
+                <div
+                    style="background: #25D366; color: white; padding: 3rem; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <i class="fab fa-whatsapp" style="font-size: 4rem; margin-bottom: 1.5rem;"></i>
+                    <h3 style="font-size: 1.8rem; margin-bottom: 1rem;">Support WhatsApp</h3>
+                    <p style="margin-bottom: 2rem; opacity: 0.9;">Besoin d'une réponse rapide ? Contactez-nous
+                        directement sur WhatsApp pour toute question sur nos produits ou vos commandes.</p>
+                    <a href="https://wa.me/212606912553" target="_blank"
+                        style="background: white; color: #25D366; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; font-weight: 700; transition: transform 0.3s;"
+                        onmouseover="this.style.transform='scale(1.05)'"
+                        onmouseout="this.style.transform='scale(1)'">Ouvrir WhatsApp</a>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Shared Modals (Global functionality) -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Mon Panier</h3><button class="close-cart" id="closeCart"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-footer">
+            <div class="cart-total"><span>Total:</span><span id="cartTotal">0 DH</span></div>
+            <button class="checkout-btn" id="checkoutBtn">Commander</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-logo tifinagh">ⴰⵎⴰⵣⵉⵖ</div>
+        <div class="footer-socials">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+        </div>
+        <p class="footer-copyright">© 2026 Amazigh Store. Authenticité et tradition.</p>
+        <span class="secret-admin-trigger" id="secretAdminTrigger"></span>
+    </footer>
+
+    <script src="./script.js"></script>
+</body>
+
+</html>
