@@ -12,6 +12,7 @@ const initialProducts = [
         category: "T-shirts",
         priceDH: 150,
         priceEUR: 14,
+        priceUSD: 15,
         image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         description: "T-shirt 100% coton premium avec motif géométrique berbère imprimé. Coupe moderne et confortable."
     },
@@ -21,6 +22,7 @@ const initialProducts = [
         category: "T-shirts",
         priceDH: 150,
         priceEUR: 14,
+        priceUSD: 15,
         image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         description: "Élégant T-shirt noir arborant le symbole Yaz (ⵣ) en doré. Idéal pour un look affirmé et authentique."
     },
@@ -30,6 +32,7 @@ const initialProducts = [
         category: "Accessoires",
         priceDH: 120,
         priceEUR: 11,
+        priceUSD: 12,
         image: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         description: "Casquette brodée avec l'alphabet Tifinagh. Taille ajustable, qualité premium et design épuré."
     }
@@ -51,6 +54,7 @@ async function fetchProducts() {
                 category: p.category,
                 priceDH: p.price,
                 priceEUR: Math.round(p.price / 10.7), // Fallback conversion if priceEUR not in DB
+                priceUSD: Math.round(p.price / 10), // Fallback conversion if priceUSD not in DB
                 image: p.image,
                 description: p.description
             }));
@@ -68,7 +72,7 @@ fetchProducts();
 
 let cart = JSON.parse(localStorage.getItem('amazigh_cart')) || [];
 let orders = JSON.parse(localStorage.getItem('amazigh_orders')) || [];
-let currency = localStorage.getItem('amazigh_currency') || 'DH'; // 'DH' or 'EUR'
+let currency = localStorage.getItem('amazigh_currency') || 'DH'; // 'DH', 'EUR', or 'USD'
 let currentCategory = 'all';
 
 // Save functions
@@ -126,15 +130,23 @@ const confirmOrderTotal = document.getElementById('confirmOrderTotal');
 const categoryFilters = document.querySelectorAll('.filter-btn[data-category]');
 
 // --- CURRENCY LOGIC ---
-function formatPrice(dh, eur) {
-    return currency === 'DH' ? `${dh} DH` : `${eur} €`;
+function formatPrice(dh, eur, usd) {
+    if (currency === 'DH') return `${dh} DH`;
+    if (currency === 'EUR') return `${eur} €`;
+    return `$${usd}`;
 }
 
 if (currencyToggle) {
     currencyToggle.addEventListener('click', () => {
-        currency = currency === 'DH' ? 'EUR' : 'DH';
+        if (currency === 'DH') {
+            currency = 'EUR';
+        } else if (currency === 'EUR') {
+            currency = 'USD';
+        } else {
+            currency = 'DH';
+        }
         saveCurrency();
-        currencyToggle.innerText = currency === 'DH' ? '🇲🇦 DH' : '🇪🇺 EUR';
+        updateCurrencyButton();
         if (productsGrid) renderProducts();
         renderCart();
         if (adminModal && adminModal.classList.contains('show')) {
@@ -143,7 +155,19 @@ if (currencyToggle) {
     });
 
     // Initialize currency button text
-    currencyToggle.innerText = currency === 'DH' ? '🇲🇦 DH' : '🇪🇺 EUR';
+    updateCurrencyButton();
+}
+
+function updateCurrencyButton() {
+    if (currencyToggle) {
+        if (currency === 'DH') {
+            currencyToggle.innerText = '🇲🇦 DH';
+        } else if (currency === 'EUR') {
+            currencyToggle.innerText = '🇪🇺 EUR';
+        } else {
+            currencyToggle.innerText = '🇺🇸 USD';
+        }
+    }
 }
 
 // --- RENDER PRODUCTS ---
@@ -184,7 +208,7 @@ function renderProducts() {
                         ` : ''}
                         
                         <div class="product-price">
-                            ${formatPrice(product.priceDH, product.priceEUR)}
+                            ${formatPrice(product.priceDH, product.priceEUR, product.priceUSD)}
                         </div>
                         <button class="add-to-cart" onclick="addToCart('${product.id}', this)">
                             <i class="fas fa-shopping-cart"></i> Ajouter au panier
@@ -268,6 +292,7 @@ function renderCart() {
     cartItemsContainer.innerHTML = '';
     let totalDH = 0;
     let totalEUR = 0;
+    let totalUSD = 0;
 
     if (cart.length === 0) {
         cartItemsContainer.innerHTML = `
@@ -280,6 +305,7 @@ function renderCart() {
         cart.forEach(item => {
             totalDH += Number(item.priceDH);
             totalEUR += Number(item.priceEUR);
+            totalUSD += Number(item.priceUSD || Math.round(item.priceDH / 10));
 
             const itemEl = document.createElement('div');
             itemEl.className = 'cart-item';
@@ -291,7 +317,7 @@ function renderCart() {
                                 ${item.selectedSize ? `<div class="cart-item-meta">Taille: <strong>${item.selectedSize}</strong></div>` : ''}
                             </div>
                             <div class="cart-item-bottom">
-                                <div class="cart-item-price">${formatPrice(item.priceDH, item.priceEUR)}</div>
+                                <div class="cart-item-price">${formatPrice(item.priceDH, item.priceEUR, item.priceUSD || Math.round(item.priceDH / 10))}</div>
                                 <button class="cart-item-remove" onclick="removeFromCart('${item.cartItemId}')">
                                     <i class="fas fa-trash-alt"></i> Retirer
                                 </button>
@@ -302,7 +328,7 @@ function renderCart() {
         });
     }
 
-    if (cartTotalEl) cartTotalEl.innerText = formatPrice(totalDH, totalEUR);
+    if (cartTotalEl) cartTotalEl.innerText = formatPrice(totalDH, totalEUR, totalUSD);
     updateCartCount();
 }
 
@@ -428,7 +454,7 @@ function renderAdminProducts() {
                         <img src="${product.image}" alt="${product.name}">
                         <div>
                             <strong style="font-size: 1.1rem; display:block;">${product.name}</strong>
-                            <span style="color: #666; font-size: 0.9rem;">${product.category} • ${product.priceDH} DH / ${product.priceEUR} €</span>
+                            <span style="color: #666; font-size: 0.9rem;">${product.category} • ${product.priceDH} DH / ${product.priceEUR} € / $${product.priceUSD}</span>
                         </div>
                     </div>
                     <div class="admin-product-actions">
@@ -588,21 +614,22 @@ if (checkoutBtn) {
 
     // Build summary
     checkoutOrderSummary.innerHTML = '';
-    let totalDH = 0; let totalEUR = 0;
+    let totalDH = 0; let totalEUR = 0; let totalUSD = 0;
     cart.forEach(item => {
         totalDH += Number(item.priceDH);
         totalEUR += Number(item.priceEUR);
+        totalUSD += Number(item.priceUSD || Math.round(item.priceDH / 10));
         checkoutOrderSummary.innerHTML += `
                     <div class="order-summary-item">
                         <span>${item.name} ${item.selectedSize ? '(' + item.selectedSize + ')' : ''}</span>
-                        <strong>${formatPrice(item.priceDH, item.priceEUR)}</strong>
+                        <strong>${formatPrice(item.priceDH, item.priceEUR, item.priceUSD || Math.round(item.priceDH / 10))}</strong>
                     </div>
                 `;
     });
     checkoutOrderSummary.innerHTML += `
                 <div class="order-summary-item" style="border:none; font-size:1.2rem; margin-top:10px;">
                     <span><strong>Total:</strong></span>
-                    <strong style="color:var(--primary-green);">${formatPrice(totalDH, totalEUR)}</strong>
+                    <strong style="color:var(--primary-green);">${formatPrice(totalDH, totalEUR, totalUSD)}</strong>
                 </div>
             `;
 
@@ -633,10 +660,11 @@ if (checkoutForm) {
     checkoutForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-    let totalDH = 0; let totalEUR = 0;
+    let totalDH = 0; let totalEUR = 0; let totalUSD = 0;
     cart.forEach(item => {
         totalDH += Number(item.priceDH);
         totalEUR += Number(item.priceEUR);
+        totalUSD += Number(item.priceUSD || Math.round(item.priceDH / 10));
     });
 
     const orderId = '#AZ' + Math.floor(1000 + Math.random() * 9000);
@@ -649,7 +677,7 @@ if (checkoutForm) {
 
     // Build cart summary string for Formspree
     const cartSummary = cart.map(item =>
-        `${item.name}${item.selectedSize ? ' (' + item.selectedSize + ')' : ''} — ${item.priceDH} DH / ${item.priceEUR} €`
+        `${item.name}${item.selectedSize ? ' (' + item.selectedSize + ')' : ''} — ${item.priceDH} DH / ${item.priceEUR} € / $${item.priceUSD || Math.round(item.priceDH / 10)}`
     ).join('\n');
 
     // --- Send to Formspree ---
@@ -665,6 +693,7 @@ if (checkoutForm) {
         "Articles commandés": cartSummary,
         "Total (DH)": totalDH + ' DH',
         "Total (EUR)": totalEUR + ' €',
+        "Total (USD)": totalUSD + ' $',
         "Date": new Date().toLocaleString('fr-FR')
     };
 
@@ -691,6 +720,7 @@ if (checkoutForm) {
         items: [...cart],
         totalDH,
         totalEUR,
+        totalUSD,
         date: new Date().toLocaleString('fr-FR'),
         status: 'En attente'
     };
@@ -718,7 +748,7 @@ if (checkoutForm) {
     checkoutForm.reset();
 
         confirmOrderId.innerText = newOrder.id;
-        confirmOrderTotal.innerText = formatPrice(newOrder.totalDH, newOrder.totalEUR);
+        confirmOrderTotal.innerText = formatPrice(newOrder.totalDH, newOrder.totalEUR, newOrder.totalUSD);
         confirmationModal.classList.add('show');
     });
 }
@@ -797,7 +827,7 @@ async function renderOrders() {
 
                     <div style="background:#f9f9f9; padding:10px; border-radius:6px; font-size:0.9rem; margin-bottom:15px;">
                         <strong>Produits:</strong> ${itemsHtml}<br>
-                        <strong style="color:var(--primary-green); font-size:1.1rem; display:block; margin-top:5px;">Total: ${order.totalDH} DH / ${order.totalEUR} €</strong>
+                        <strong style="color:var(--primary-green); font-size:1.1rem; display:block; margin-top:5px;">Total: ${order.totalDH} DH / ${order.totalEUR} € / $${order.totalUSD || Math.round(order.totalDH / 10)}</strong>
                     </div>
 
                     <div style="display:flex; gap:10px; align-items:center;">
